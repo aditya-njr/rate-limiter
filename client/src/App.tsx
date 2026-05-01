@@ -1,23 +1,26 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { Algorithm, SimulateRequest, SimulateResponse } from './api';
-import { health, resetSession, simulate } from './api';
-import { ControlPanel } from './components/ControlPanel';
-import { ResultsChart } from './components/ResultsChart';
-import { ResultsTable } from './components/ResultsTable';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import type { Algorithm, SimulateRequest, SimulateResponse } from "./api";
+import { health, resetSession, simulate } from "./api";
+import { ControlPanel } from "./components/ControlPanel";
+import { ResultsChart } from "./components/ResultsChart";
+import { ResultsTable } from "./components/ResultsTable";
 
 function defaultClientId() {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return `demo-${crypto.randomUUID().slice(0, 8)}`;
   }
   return `demo-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 export function App() {
-  const [algorithm, setAlgorithm] = useState<Algorithm>('tokenBucket');
+  const [algorithm, setAlgorithm] = useState<Algorithm>("tokenBucket");
   const [clientId, setClientId] = useState(defaultClientId);
   const [requestCount, setRequestCount] = useState(80);
   const [intervalMs, setIntervalMs] = useState(50);
-  const [fixedSliding, setFixedSliding] = useState({ windowMs: 1000, maxRequests: 5 });
+  const [fixedSliding, setFixedSliding] = useState({
+    windowMs: 1000,
+    maxRequests: 5,
+  });
   const [token, setToken] = useState({ capacity: 10, refillPerSecond: 2 });
   const [leaky, setLeaky] = useState({ capacity: 8, leakPerSecond: 3 });
 
@@ -46,14 +49,22 @@ export function App() {
       requestCount,
       intervalMs,
     };
-    if (algorithm === 'fixedWindow' || algorithm === 'slidingWindow') {
+    if (algorithm === "fixedWindow" || algorithm === "slidingWindow") {
       return { ...base, config: { ...fixedSliding } };
     }
-    if (algorithm === 'tokenBucket') {
+    if (algorithm === "tokenBucket") {
       return { ...base, config: { ...token } };
     }
     return { ...base, config: { ...leaky } };
-  }, [algorithm, clientId, requestCount, intervalMs, fixedSliding, token, leaky]);
+  }, [
+    algorithm,
+    clientId,
+    requestCount,
+    intervalMs,
+    fixedSliding,
+    token,
+    leaky,
+  ]);
 
   const onRun = async () => {
     setLoading(true);
@@ -62,7 +73,7 @@ export function App() {
       const res = await simulate(buildRequest());
       setResult(res);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Request failed');
+      setError(e instanceof Error ? e.message : "Request failed");
       setResult(null);
     } finally {
       setLoading(false);
@@ -74,7 +85,7 @@ export function App() {
       await resetSession(clientId);
       setError(null);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Reset failed');
+      setError(e instanceof Error ? e.message : "Reset failed");
     }
   };
 
@@ -92,27 +103,33 @@ export function App() {
               Rate limiting algorithms
             </h1>
             <p className="mt-3 max-w-2xl text-slate-400">
-              Compare fixed window, sliding window log, token bucket, and leaky bucket. Simulations use
-              deterministic virtual time on the server
+              Compare fixed window, sliding window log, token bucket, and leaky
+              bucket. Simulations use deterministic virtual time on the server
             </p>
           </div>
           <div className="flex max-w-md flex-col items-end gap-2 text-right">
             <div
               className={`rounded-full border px-3 py-1 text-xs font-medium ${
                 apiOk === null
-                  ? 'border-slate-700 text-slate-500'
+                  ? "border-slate-700 text-slate-500"
                   : apiOk
-                    ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400'
-                    : 'border-red-500/40 bg-red-500/10 text-red-400'
+                    ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+                    : "border-red-500/40 bg-red-500/10 text-red-400"
               }`}
             >
-              {apiOk === null ? 'Checking API…' : apiOk ? 'API reachable' : 'API unreachable from browser'}
+              {apiOk === null
+                ? "Checking API…"
+                : apiOk
+                  ? "API reachable"
+                  : "API unreachable from browser"}
             </div>
             {apiOk === false && healthDetail && (
               <p className="text-xs text-slate-500" title={healthDetail}>
-                {healthDetail}. Check DevTools console for <code className="text-slate-400">[api]</code> logs.
-                Ensure the API is on port 3001 or set <code className="text-slate-400">VITE_API_PROXY_TARGET</code>{' '}
-                / <code className="text-slate-400">VITE_API_URL</code>.
+                {healthDetail}. Check DevTools console for{" "}
+                <code className="text-slate-400">[api]</code> logs. Ensure the
+                API is on port 3001 or set{" "}
+                <code className="text-slate-400">VITE_API_PROXY_TARGET</code> /{" "}
+                <code className="text-slate-400">VITE_API_URL</code>.
               </p>
             )}
           </div>
@@ -149,16 +166,28 @@ export function App() {
         {summary && (
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3">
-              <p className="text-xs uppercase tracking-wide text-slate-500">Total</p>
-              <p className="text-2xl font-semibold text-white">{summary.total}</p>
+              <p className="text-xs uppercase tracking-wide text-slate-500">
+                Total
+              </p>
+              <p className="text-2xl font-semibold text-white">
+                {summary.total}
+              </p>
             </div>
             <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3">
-              <p className="text-xs uppercase tracking-wide text-emerald-500/80">Allowed</p>
-              <p className="text-2xl font-semibold text-emerald-400">{summary.allowed}</p>
+              <p className="text-xs uppercase tracking-wide text-emerald-500/80">
+                Allowed
+              </p>
+              <p className="text-2xl font-semibold text-emerald-400">
+                {summary.allowed}
+              </p>
             </div>
             <div className="rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3">
-              <p className="text-xs uppercase tracking-wide text-red-400/80">Rejected</p>
-              <p className="text-2xl font-semibold text-red-400">{summary.rejected}</p>
+              <p className="text-xs uppercase tracking-wide text-red-400/80">
+                Rejected
+              </p>
+              <p className="text-2xl font-semibold text-red-400">
+                {summary.rejected}
+              </p>
             </div>
           </div>
         )}
@@ -179,8 +208,7 @@ export function App() {
       </div>
 
       <footer className="mt-16 border-t border-slate-800 pt-8 text-center text-xs text-slate-600">
-        Server: FastAPI + Pydantic · Limiters are in-memory for this demo · Production would use Redis for
-        distributed fairness
+        Server: FastAPI + Pydantic · Limiters are in-memory
       </footer>
     </div>
   );
