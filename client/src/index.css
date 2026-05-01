@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --bg: #0b0f14;
+  --surface: #121922;
+  --border: #1e2937;
+  --accent: #38bdf8;
+  --accent-dim: rgba(56, 189, 248, 0.12);
+  --ok: #34d399;
+  --deny: #f87171;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(1200px 600px at 10% -10%, rgba(56, 189, 248, 0.08), transparent),
+    radial-gradient(800px 400px at 90% 0%, rgba(52, 211, 153, 0.06), transparent), var(--bg);
+  color: #e5e7eb;
+}
